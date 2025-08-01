@@ -14,25 +14,27 @@ export const SocketContextProvider = ({ children }) => {
   const { authUser } = useAuthContext();
 
   useEffect(() => {
+    let socketInstance;
+
     if (authUser) {
-      const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL, {
+      socketInstance = io(import.meta.env.VITE_SOCKET_SERVER_URL, {
         query: { userId: authUser._id },
+        transports: ["websocket"], // ✅ important for Render and stability
+        secure: true, // ✅ enforces HTTPS
       });
 
-      setSocket(socket);
+      setSocket(socketInstance);
 
-      socket.on("getOnlineUsers", (users) => {
+      socketInstance.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
       });
-
-      return () => socket.close();
-    } else {
-      if (socket) {
-        socket.close();
-        setSocket(null);
-      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => {
+      if (socketInstance) {
+        socketInstance.disconnect(); // ✅ use disconnect for cleanup
+      }
+    };
   }, [authUser]);
 
   return (
