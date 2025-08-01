@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
@@ -25,6 +26,26 @@ const PORT = process.env.PORT || 5000;
 // ✅ Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+// ✅ CORS
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://mern-chat-app-master-frontend.onrender.com",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps, curl, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 // ✅ API Routes
 app.use("/api/auth", authRoutes);
