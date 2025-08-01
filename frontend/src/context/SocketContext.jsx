@@ -1,12 +1,11 @@
-// SocketContext.jsx
+// frontend/src/context/SocketContext.jsx
+
 import { createContext, useState, useEffect, useContext } from "react";
 import { useAuthContext } from "./AuthContext";
 import io from "socket.io-client";
 
-// Creating the context
 export const SocketContext = createContext();
 
-// Context Provider component
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -18,8 +17,8 @@ export const SocketContextProvider = ({ children }) => {
     if (authUser) {
       socketInstance = io(import.meta.env.VITE_SOCKET_SERVER_URL, {
         query: { userId: authUser._id },
-        transports: ["websocket"],
-        secure: true,
+        transports: ["websocket", "polling"],
+        withCredentials: true,
       });
 
       setSocket(socketInstance);
@@ -43,5 +42,4 @@ export const SocketContextProvider = ({ children }) => {
   );
 };
 
-// ✅ Exporting the custom hook so it can be imported elsewhere
 export const useSocketContext = () => useContext(SocketContext);

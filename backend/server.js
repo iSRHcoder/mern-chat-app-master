@@ -1,4 +1,4 @@
-// server.js
+// backend/server.js
 
 import express from "express";
 import dotenv from "dotenv";
@@ -36,7 +36,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps, curl, Postman)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -52,13 +51,13 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 
-// ✅ Static frontend build (if using Vite/React)
+// ✅ Serve React static files
 app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
 });
 
-// ✅ Connect to DB first, then start server
+// ✅ Connect to DB then start server
 connectToMongoDB()
   .then(() => {
     server.listen(PORT, () => {
