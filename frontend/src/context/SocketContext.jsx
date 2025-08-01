@@ -1,12 +1,9 @@
-import { createContext, useState, useEffect, useContext } from "react";
+// SocketContext.jsx
+import { createContext, useState, useEffect } from "react";
 import { useAuthContext } from "./AuthContext";
 import io from "socket.io-client";
 
-const SocketContext = createContext();
-
-export const useSocketContext = () => {
-  return useContext(SocketContext);
-};
+export const SocketContext = createContext();
 
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
@@ -19,8 +16,8 @@ export const SocketContextProvider = ({ children }) => {
     if (authUser) {
       socketInstance = io(import.meta.env.VITE_SOCKET_SERVER_URL, {
         query: { userId: authUser._id },
-        transports: ["websocket"], // ✅ important for Render and stability
-        secure: true, // ✅ enforces HTTPS
+        transports: ["websocket"],
+        secure: true,
       });
 
       setSocket(socketInstance);
@@ -32,7 +29,7 @@ export const SocketContextProvider = ({ children }) => {
 
     return () => {
       if (socketInstance) {
-        socketInstance.disconnect(); // ✅ use disconnect for cleanup
+        socketInstance.disconnect();
       }
     };
   }, [authUser]);
