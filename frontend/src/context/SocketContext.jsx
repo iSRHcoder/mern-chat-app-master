@@ -1,10 +1,12 @@
 // SocketContext.jsx
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import { useAuthContext } from "./AuthContext";
 import io from "socket.io-client";
 
+// Creating the context
 export const SocketContext = createContext();
 
+// Context Provider component
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -40,3 +42,6 @@ export const SocketContextProvider = ({ children }) => {
     </SocketContext.Provider>
   );
 };
+
+// ✅ Exporting the custom hook so it can be imported elsewhere
+export const useSocketContext = () => useContext(SocketContext);
